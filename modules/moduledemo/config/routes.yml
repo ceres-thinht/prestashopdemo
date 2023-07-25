@@ -1,0 +1,5 @@
+admin_module_demo_list:
+  path: /module_demo/list
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\ModuleDemo\Controller\ListController::listAction'

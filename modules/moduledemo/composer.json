@@ -2,8 +2,11 @@
     "name": "prestashop/moduledemo",
     "autoload": {
         "psr-4": {
-            "PrestaShop\\Moduledemo\\Controller\\": "src/Controller/"
+            "ModuleDemo\\": "src/"
         }
     },
-    "require": {}
+    "config": {
+        "prepend-autoloader": false
+    },
+    "type": "prestashop-module"
 }
