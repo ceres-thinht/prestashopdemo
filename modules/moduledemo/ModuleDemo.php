@@ -32,6 +32,7 @@ class ModuleDemo extends Module
         if (!Configuration::get('moduledemo')) {
             $this->warning = $this->l('No name provided');
         }
+        $this->uninstallTabs();
     }
 
     public function install()
@@ -115,5 +116,60 @@ class ModuleDemo extends Module
 
         // Redirect to the modified URL
         return $_SERVER['PHP_SELF'] . '?' . http_build_query($paramsArray);
+    }
+
+    public function installTabs() {
+        return $this->installModuleTab('AdminParentTab', 'My Module') &&
+        $this->installModuleTab('AdminModuleTab', 'Module Tab', 'AdminParentTab')&&
+        $this->installModuleTab('AdminSubChildTab', 'Manage Tab', 'AdminModuleTab')&&
+        $this->installModuleTab('AdminTabOne', 'Tab One', 'AdminSubChildTab')&&
+        $this->installModuleTab('AdminTabTwo', 'Tab Two', 'AdminSubChildTab')&&
+        $this->installModuleTab('AdminTabThree', 'Tab Three', 'AdminSubChildTab');
+    }
+
+    public function uninstallTabs() {
+        return $this->uninstallModuleTab('AdminParentTab') &&
+            $this->uninstallModuleTab('AdminModuleTab')&&
+            $this->uninstallModuleTab('AdminSubChildTab')&&
+            $this->uninstallModuleTab('AdminTabOne')&&
+            $this->uninstallModuleTab('AdminTabTwo')&&
+            $this->uninstallModuleTab('AdminTabThree');
+    }
+
+    private function installModuleTab($tabClass, $tabName, $tabParentName = false)
+    {
+        $tabId = (int)Tab::getIdFromClassName($tabClass);
+        if (!$tabId) {
+            $tabId = null;
+        }
+        $tab = new Tab($tabId);
+        foreach (Language::getLanguages() as $language) {
+            $tab->name[$language['id_lang']] = $tabName;
+        }
+        $tab->class_name = $tabClass;
+        $tab->module = $this->name;
+        $tab->position = 99;
+        $tab->active = 1;
+        if ($tabParentName) {
+            $tab->id_parent = (int)Tab::getIdFromClassName($tabParentName);
+        } else {
+            $tab->id_parent = 0;
+        }
+        $tab->add();
+        if (!$tab->save()) {
+            return false;
+        }
+        return true;
+    }
+
+    private function uninstallModuleTab($class_name)
+    {
+        $idTab = Tab::getIdFromClassName($class_name);
+        if ($idTab != 0) {
+            $tab = new Tab($idTab);
+            $tab->delete();
+            return true;
+        }
+        return false;
     }
 }

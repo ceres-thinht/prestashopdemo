@@ -1,2 +1,4 @@
-.idea
-/var/cache
+# Ignore all files and folders
+/*
+# Include the specific folder
+!/modules/moduledemo
